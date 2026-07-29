@@ -1,5 +1,7 @@
 import json
+import logging
 import os
+import sys
 from datetime import datetime, timezone
 from flask import Flask, redirect, render_template, request, url_for, g
 from auth0_server_python.auth_types import LogoutOptions
@@ -10,6 +12,12 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('AUTH0_SECRET')
+app.logger.setLevel(logging.INFO)
+
+if not app.logger.handlers:
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.INFO)
+    app.logger.addHandler(handler)
 
 
 def utc_now_iso() -> str:
@@ -32,7 +40,7 @@ def log_event(level: str, event: str, **fields):
         'method': request.method,
         **fields,
     }
-    message = json.dumps(payload, sort_keys=True)
+    message = f"SECLOG {json.dumps(payload, sort_keys=True)}"
     if level == 'warning':
         app.logger.warning(message)
     else:
