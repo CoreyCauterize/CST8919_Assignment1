@@ -1,0 +1,21 @@
+@baseUrl = https://YOUR_APP_NAME.azurewebsites.net
+
+### 1) Public route (no auth required)
+GET {{baseUrl}}/
+
+### 2) Unauthorized attempt to protected route (no session cookie)
+GET {{baseUrl}}/protected
+
+### 3) Start login flow (interactive browser redirect expected)
+GET {{baseUrl}}/login
+
+### 4) Protected route with valid Auth0 session cookie
+# Paste browser session cookie captured after login.
+# Expected: 200 and protected content.
+GET {{baseUrl}}/protected
+Cookie: appSession=PASTE_VALID_AUTH0_SESSION_COOKIE_HERE
+
+### 5) Repeat protected access (run multiple times)
+# Use this request repeatedly to simulate >10 accesses in 15 minutes.
+GET {{baseUrl}}/protected
+Cookie: appSession=PASTE_VALID_AUTH0_SESSION_COOKIE_HERE
